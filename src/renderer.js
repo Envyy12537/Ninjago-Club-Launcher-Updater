@@ -1736,6 +1736,35 @@ document.addEventListener('DOMContentLoaded', async () => {
     const activeTab = document.querySelector('.tab-btn.active');
     if (activeTab) updateTabsGlider(activeTab, false);
   });
-  updateDiscordPresence({ details: `W launcherze (v${appVersion})`, state: 'PrzeglÄ…da: Biblioteka gier' });
+  updateDiscordPresence({ details: `W launcherze (v${appVersion})`, state: 'Przegląda: Biblioteka gier' });
   await runStartupSequence();
+
+  // =========================================================================
+  // AUTO-UPDATE PUSH LISTENER (triggered by main.js startup check)
+  // =========================================================================
+  if (isElectron && window.ninjagoLauncher.onUpdateAvailable) {
+    window.ninjagoLauncher.onUpdateAvailable((data) => {
+      // Show toast notification
+      showToast(
+        '🔔 Dostępna aktualizacja!',
+        `Wersja v${data.latestVersion} jest gotowa do pobrania.`,
+        'info',
+        8000
+      );
+
+      // Update the status message in Settings if visible
+      if (updateStatusMsg) {
+        updateStatusMsg.innerHTML =
+          `🆕 <strong>Nowa wersja v${data.latestVersion} dostępna!</strong> ` +
+          `(${data.releaseName || 'NCL RELEASE'})`;
+      }
+
+      // Store download URL for the download button
+      if (data.downloadUrl) {
+        window.__pendingUpdateUrl = data.downloadUrl;
+        window.__pendingUpdateName = data.assetName || `Ninjago Club Launcher Setup ${data.latestVersion}.exe`;
+      }
+    });
+  }
 });
+

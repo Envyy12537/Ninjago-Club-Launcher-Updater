@@ -98,7 +98,7 @@ function loadConfig() {
       PERSONAL_FIELDS.forEach(k => delete raw[k]);
       appConfig = raw;
     }
-  } catch (e) {}
+  } catch (e) { }
 
   // 2. Read user-specific config from userData (writable, per-user)
   try {
@@ -199,12 +199,10 @@ app.whenReady().then(() => {
     discordRPC = new DiscordRPCClient(initialClientId);
     discordRPC.connect();
     discordRPC.setActivity({
-      details: 'W launcherze (v1.0.0)',
-      state: 'Przegląda: Biblioteka',
+      details: `W launcherze (v${app.getVersion()})`,
+      state: 'Przeglada: Biblioteka',
       largeImage: 'ninjagologo',
-      largeText: 'Ninjago Club Launcher',
-      smallImage: 'logolego',
-      smallText: 'Closed Beta (UE5)'
+      largeText: 'Ninjago Club Launcher'
     });
   } catch (err) {
     console.warn('[Discord RPC] Init warning:', err.message);
@@ -215,11 +213,51 @@ app.whenReady().then(() => {
       createWindow();
     }
   });
-});
+
+  // Auto-check for updates 5s after startup (non-blocking)
+  setTimeout(async () => {
+    if (!mainWindow || mainWindow.isDestroyed()) return;
+    try {
+      const cfg = loadConfig();
+      if (!cfg.autoUpdate) return;
+      const repo = cfg.githubRepo || DEFAULT_GITHUB_REPO;
+      const parts = repo.split('/');
+      const owner = parts[0];
+      const repoName = parts[1] || parts[0];
+      const token = cfg.githubToken || '';
+      const release = await fetchLatestGitHubRelease(owner, repoName, token);
+      if (!release || !release.tag_name) return;
+      const latestVersion = release.tag_name.replace(/^v/, '');
+      const currentVersion = app.getVersion();
+      if (isNewerVersion(latestVersion, currentVersion)) {
+        let downloadUrl = release.html_url;
+        let assetName = '';
+        if (release.assets && release.assets.length > 0) {
+          const exeAsset = release.assets.find(a => a.name.endsWith('.exe') && a.name.includes('Setup')) ||
+            release.assets.find(a => a.name.endsWith('.exe')) ||
+            release.assets[0];
+          downloadUrl = exeAsset.browser_download_url;
+          assetName = exeAsset.name;
+        }
+        // Notify renderer of available update
+        mainWindow.webContents.send('updater:update-available', {
+          currentVersion,
+          latestVersion,
+          releaseName: release.name || release.tag_name,
+          releaseNotes: release.body || '',
+          downloadUrl,
+          assetName
+        });
+      }
+    } catch (e) {
+      console.warn('[AutoUpdate] Startup check failed:', e.message);
+    }
+  }, 5000);
+})
 
 app.on('window-all-closed', () => {
   if (discordRPC) {
-    try { discordRPC.disconnect(); } catch (e) {}
+    try { discordRPC.disconnect(); } catch (e) { }
   }
   if (process.platform !== 'darwin') {
     app.quit();
@@ -273,7 +311,7 @@ ipcMain.handle('app:get-version', () => {
 // ============================================================================
 // GITHUB AUTO-UPDATER ENGINE
 // ============================================================================
-const DEFAULT_GITHUB_REPO = 'NinjagoClub/Ninjago-Club-Launcher';
+const DEFAULT_GITHUB_REPO = 'Envyy12537/Ninjago-Club-Launcher-Updater';
 
 function isNewerVersion(remoteVer, currentVer) {
   const clean = (v) => String(v || '0.0.0').replace(/^v/, '').split('.').map(n => parseInt(n, 10) || 0);
@@ -289,7 +327,7 @@ function isNewerVersion(remoteVer, currentVer) {
 function fetchLatestGitHubRelease(repoOwner, repoName, token) {
   return new Promise((resolve) => {
     const headers = {
-      'User-Agent': 'NinjagoClubLauncher/1.0.0 (Windows)',
+      'User-Agent': 'NinjagoClubLauncher/1.0.1 (Windows)',
       'Accept': 'application/vnd.github.v3+json'
     };
     if (token && token.trim()) {
@@ -356,7 +394,7 @@ function downloadFileWithProgress(fileUrl, destPath, onProgress, token) {
 
         if (res.statusCode !== 200) {
           file.close();
-          try { fs.unlinkSync(destPath); } catch (e) {}
+          try { fs.unlinkSync(destPath); } catch (e) { }
           return reject(new Error(`Pobieranie nie powiodło się (Status: ${res.statusCode})`));
         }
 
@@ -378,7 +416,7 @@ function downloadFileWithProgress(fileUrl, destPath, onProgress, token) {
         });
       }).on('error', (err) => {
         file.close();
-        try { fs.unlinkSync(destPath); } catch (e) {}
+        try { fs.unlinkSync(destPath); } catch (e) { }
         reject(err);
       });
     }
@@ -524,11 +562,11 @@ async function startDiscordOAuthFlow(credentials) {
 
     const cleanup = () => {
       if (localServer) {
-        try { localServer.close(); } catch (e) {}
+        try { localServer.close(); } catch (e) { }
         localServer = null;
       }
       if (authWindow && !authWindow.isDestroyed()) {
-        try { authWindow.close(); } catch (e) {}
+        try { authWindow.close(); } catch (e) { }
       }
       authWindow = null;
     };
@@ -635,7 +673,7 @@ async function startDiscordOAuthFlow(credentials) {
             if (fs.existsSync(logoPath)) {
               logoBase64 = `data:image/png;base64,${fs.readFileSync(logoPath).toString('base64')}`;
             }
-          } catch (e) {}
+          } catch (e) { }
 
           res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
           res.end(`
@@ -980,7 +1018,7 @@ ipcMain.handle('system:get-available-drives', async () => {
           defaultPath: `${drive}\\Games\\Ninjago Club\\Game`
         });
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   return results.length > 0 ? results : [
@@ -1022,7 +1060,7 @@ ipcMain.handle('game:verify-files', async (_, customPath) => {
     if (!fs.existsSync(targetDir)) {
       fs.mkdirSync(targetDir, { recursive: true });
     }
-  } catch (e) {}
+  } catch (e) { }
 
   return {
     success: true,
@@ -1066,7 +1104,7 @@ ipcMain.handle('game:launch', async (_, launchOptions = {}) => {
 
   try {
     const gameDir = path.dirname(targetPath);
-    
+
     // Spawn UE5 process
     gameProcess = spawn(targetPath, args, {
       cwd: gameDir,

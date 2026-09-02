@@ -23,6 +23,11 @@ contextBridge.exposeInMainWorld('ninjagoLauncher', {
     ipcRenderer.on('updater:progress', handler);
     return () => ipcRenderer.removeListener('updater:progress', handler);
   },
+  onUpdateAvailable: (callback) => {
+    const handler = (_, data) => callback(data);
+    ipcRenderer.on('updater:update-available', handler);
+    return () => ipcRenderer.removeListener('updater:update-available', handler);
+  },
   getDiskSpace: (targetPath) => ipcRenderer.invoke('system:get-disk-space', targetPath),
   getAvailableDrives: () => ipcRenderer.invoke('system:get-available-drives'),
 
