@@ -1,7 +1,7 @@
 {
   "name": "ninjago-club-launcher",
   "productName": "Ninjago Club Launcher",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Professional Game Launcher for Ninjago City: Open World (Unreal Engine 5)",
   "main": "main.js",
   "scripts": {

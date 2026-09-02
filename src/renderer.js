@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const isElectron = Boolean(window.ninjagoLauncher);
 
   // Load app version dynamically from package.json via IPC
-  let appVersion = '1.0.1';
+  let appVersion = '1.0.2';
   if (isElectron && window.ninjagoLauncher.getAppVersion) {
     try { appVersion = await window.ninjagoLauncher.getAppVersion(); } catch (e) {}
   }
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (isElectron && window.ninjagoLauncher.setDiscordActivity) {
       window.ninjagoLauncher.setDiscordActivity({
         details: data.details || `W launcherze (v${appVersion})`,
-        state: data.state || 'PrzeglÄ…da: Biblioteka',
+        state: data.state || 'Przegląda: Biblioteka',
         largeImage: 'ninjagologo',
         largeText: 'Ninjago Club Launcher',
         smallImage: data.smallImage || null,
@@ -254,12 +254,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   function updatePlayButtonUI(state) {
     gameState = state;
     if (btnPlayText) {
-      btnPlayText.textContent = (currentLang === 'pl') ? 'WKRĂ“TCE' : (currentLang === 'de') ? 'DEMNĂ„CHST' : (currentLang === 'uk') ? 'ĐťĐ•Đ—ĐĐ‘ĐĐ ĐžĐś' : 'COMING SOON';
+      if (currentLang === 'pl') btnPlayText.textContent = 'WKR\u00d3TCE';
+      else if (currentLang === 'de') btnPlayText.textContent = 'DEMN\u00c4CHST';
+      else if (currentLang === 'uk') btnPlayText.textContent = '\u041d\u0415\u0417\u0410\u0411\u0410\u0420\u041e\u041c';
+      else btnPlayText.textContent = 'COMING SOON';
     }
     if (btnPlaySubtext) {
-      btnPlaySubtext.textContent = (currentLang === 'pl') ? 'GRA W PRODUKCJI' : (currentLang === 'de') ? 'IN PRODUKTION' : (currentLang === 'uk') ? 'ĐŁ Đ’ĐĐ ĐžĐ‘ĐťĐĐ¦Đ˘Đ’Đ†' : 'IN PRODUCTION';
+      if (currentLang === 'pl') btnPlaySubtext.textContent = 'GRA W PRODUKCJI';
+      else if (currentLang === 'de') btnPlaySubtext.textContent = 'IN PRODUKTION';
+      else if (currentLang === 'uk') btnPlaySubtext.textContent = '\u0423 \u0412\u0418\u0420\u041e\u0411\u041d\u0418\u0426\u0422\u0412\u0406';
+      else btnPlaySubtext.textContent = 'IN PRODUCTION';
     }
-    // Button stays permanently disabled â€” game not yet released
+    // Button stays permanently disabled — game not yet released
     if (btnPlay) {
       btnPlay.setAttribute('disabled', 'true');
       btnPlay.style.pointerEvents = 'none';
@@ -531,7 +537,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       tabLibrary.setAttribute('aria-selected', 'true');
       viewLibrary.classList.remove('hide');
       activeTabBtn = tabLibrary;
-      updateDiscordPresence({ details: `W launcherze (v${appVersion})`, state: 'PrzeglÄ…da: Biblioteka gier' });
+      updateDiscordPresence({ details: `W launcherze (v${appVersion})`, state: 'Przegląda: Biblioteka gier' });
     } else if (target === 'patch') {
       tabPatch.classList.add('active');
       tabPatch.setAttribute('aria-selected', 'true');
@@ -543,7 +549,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       tabFaq.setAttribute('aria-selected', 'true');
       viewFaq.classList.remove('hide');
       activeTabBtn = tabFaq;
-      updateDiscordPresence({ details: `W launcherze (v${appVersion})`, state: 'PrzeglÄ…da: Pomoc i FAQ' });
+      updateDiscordPresence({ details: `W launcherze (v${appVersion})`, state: 'Przegląda: Pomoc i FAQ' });
     }
 
     updateTabsGlider(activeTabBtn, true);
@@ -723,7 +729,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     playSound('click');
     if (chkEulaAgree) chkEulaAgree.checked = false;
     if (btnConfirmInstall) btnConfirmInstall.disabled = true;
-    updateDiscordPresence({ details: 'Konfiguracja instalacji', state: 'WybĂłr dysku dla gry (UE5)' });
+    updateDiscordPresence({ details: 'Konfiguracja instalacji', state: 'Wybór dysku dla gry (UE5)' });
     await loadAndRenderDrives();
     if (installModal) installModal.classList.remove('hide');
   }
@@ -731,7 +737,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   function closeInstallModal() {
     playSound('click');
     if (installModal) installModal.classList.add('hide');
-    updateDiscordPresence({ details: `W launcherze (v${appVersion})`, state: 'PrzeglÄ…da: Biblioteka gier' });
+    updateDiscordPresence({ details: `W launcherze (v${appVersion})`, state: 'Przegląda: Biblioteka gier' });
   }
 
   if (btnPlay) {
@@ -892,14 +898,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   function openDownloadsModal() {
     playSound('click');
     syncDownloadSettingsUI();
-    updateDiscordPresence({ details: 'MenedĹĽer pobierania', state: 'PrzeglÄ…da pobieranie gier' });
+    updateDiscordPresence({ details: 'Menedżer pobierania', state: 'Przegląda pobieranie gier' });
     if (downloadsModal) downloadsModal.classList.remove('hide');
   }
 
   function closeDownloadsModal() {
     playSound('click');
     if (downloadsModal) downloadsModal.classList.add('hide');
-    updateDiscordPresence({ details: `W launcherze (v${appVersion})`, state: 'PrzeglÄ…da: Biblioteka gier' });
+    updateDiscordPresence({ details: `W launcherze (v${appVersion})`, state: 'Przegląda: Biblioteka gier' });
   }
 
   if (btnOpenDownloads) btnOpenDownloads.addEventListener('click', openDownloadsModal);
@@ -938,13 +944,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
 
       if (targetTab === 'inprogress') {
-        updateDiscordPresence({ details: 'MenedĹĽer pobierania', state: 'Kolejka pobierania (W toku)' });
+        updateDiscordPresence({ details: 'Menedżer pobierania', state: 'Kolejka pobierania (W toku)' });
       } else if (targetTab === 'installed') {
-        updateDiscordPresence({ details: 'MenedĹĽer pobierania', state: 'ZarzÄ…dza: Pobrane gry' });
+        updateDiscordPresence({ details: 'Menedżer pobierania', state: 'Zarządza: Pobrane gry' });
       } else if (targetTab === 'scheduled') {
-        updateDiscordPresence({ details: 'MenedĹĽer pobierania', state: 'Kolejka pobierania (Zaplanowane)' });
+        updateDiscordPresence({ details: 'Menedżer pobierania', state: 'Kolejka pobierania (Zaplanowane)' });
       } else if (targetTab === 'settings') {
-        updateDiscordPresence({ details: 'MenedĹĽer pobierania', state: 'Ustawienia pobierania' });
+        updateDiscordPresence({ details: 'Menedżer pobierania', state: 'Ustawienia pobierania' });
       }
     });
   });
@@ -1210,7 +1216,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   function closeSettingsModal() {
     playSound('click');
-    updateDiscordPresence({ details: `W launcherze (v${appVersion})`, state: 'PrzeglÄ…da: Biblioteka gier' });
+    updateDiscordPresence({ details: `W launcherze (v${appVersion})`, state: 'Przegląda: Biblioteka gier' });
     settingsModal.classList.add('hide');
   }
 
@@ -1721,7 +1727,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       } else {
         updateDiscordPresence({
           details: `W launcherze (v${appVersion})`,
-          state: 'PrzeglÄ…da: Biblioteka gier'
+          state: 'Przegląda: Biblioteka gier'
         });
       }
     });
