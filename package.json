@@ -1,0 +1,72 @@
+{
+  "name": "ninjago-club-launcher",
+  "productName": "Ninjago Club Launcher",
+  "version": "1.0.1",
+  "description": "Professional Game Launcher for Ninjago City: Open World (Unreal Engine 5)",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "build": "electron-builder --win",
+    "dist": "electron-builder --win",
+    "dist:portable": "electron-builder --win portable",
+    "dist:installer": "electron-builder --win nsis"
+  },
+  "build": {
+    "appId": "com.ninjagoclub.launcher",
+    "productName": "Ninjago Club Launcher",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Ninjago Club Launcher",
+      "installerIcon": "icon.ico",
+      "uninstallerIcon": "icon.ico"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "src/**/*",
+      "icon.ico",
+      "NCL.ico",
+      "ninjagologo.png",
+      "logolego.png",
+      "banner.png",
+      "launcher-config.json"
+    ]
+  },
+  "keywords": [
+    "ninjago",
+    "launcher",
+    "unreal-engine-5",
+    "game-launcher",
+    "electron"
+  ],
+  "author": "Ninjago Club Team",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^40.8.0",
+    "electron-builder": "^25.1.8"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "soundEnabled": true,
+  "autoCloseOnLaunch": false,
+  "autoUpdate": true,
+  "discordUrl": "https://discord.gg/ninjago",
+  "twitterUrl": "https://x.com/ninjagofanproj",
+  "launchArgs": "",
+  "discordClientId": "1544344870171447417",
+  "discordClientSecret": "0XdxykgvrX9uJJgMsW00D2fOaYiXlSLK",
+  "githubOwner": "NinjagoClub",
+  "githubRepo": "NinjagoClub/Ninjago-Club-Launcher",
+  "githubToken": "",
+  "downloadSettings": {
+    "notifyInstalled": false,
+    "allowDuringEditors": true,
+    "allowDuringGame": false,
+    "defaultInstallDir": "C:\\Program Files\\Ninjago Club\\Game",
+    "autoUpdateActive": true,
+    "scheduleUpdates": false,
+    "throttleSpeed": false,
+    "throttleLimitKb": 0,
+    "cacheDir": "C:\\ProgramData\\NinjagoClub\\Cache"
+  },
+  "websiteUrl": "https://ninjagoclub.gg"
+}
